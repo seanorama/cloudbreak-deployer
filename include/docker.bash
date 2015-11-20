@@ -132,8 +132,3 @@ docker-check-version() {
     docker-check-client-version
     docker-check-server-version
 }
-
-docker-kill-last() {
-    ( docker rm -f $(docker ps -ql) & ) &>/dev/null
-}
-

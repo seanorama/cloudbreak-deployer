@@ -45,17 +45,15 @@ migrate-execute-mybatis-migrations() {
         local scripts_location=$(pwd)/.schema/$service_name
         rm -rf $scripts_location
         mkdir -p $scripts_location
-        docker run --entrypoint bash -v $scripts_location:/migrate/scripts $docker_image_name -c "cp /schema/* /migrate/scripts/"
-        docker-kill-last
+        docker run --rm --entrypoint bash -v $scripts_location:/migrate/scripts $docker_image_name -c "cp /schema/* /migrate/scripts/"
     fi
     migrateDebug "Scripts location:  $scripts_location"
-    local migrateResult=$(docker run \
+    local migrateResult=$(docker run --rm \
         --link $container_name:db \
         -v $scripts_location:/migrate/scripts \
         sequenceiq/mybatis-migrations:$DOCKER_TAG_MIGRATION "$@" \
       | tee -a "$DB_MIGRATION_LOG"
     )
-    docker-kill-last
 
     if [[ ! "${migrateResult}" ]] || grep -q "MyBatis Migrations SUCCESS" <<< "${migrateResult}"; then
         info "Migration SUCCESS: $service_name $@"
