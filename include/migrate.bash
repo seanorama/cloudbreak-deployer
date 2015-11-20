@@ -34,7 +34,8 @@ migrate-execute-mybatis-migrations() {
     local service_name=$1 && shift
     local container_name=$(compose-get-container $service_name)
         migrateDebug "Migration command on $service_name with params: '$*' will be executed on container: $container_name"
-    if [[ ! "$container_name" ]]; then
+    if [ -z "$container_name" ]
+    then
         migrateError "DB container with matching name is not running. Expected name: .*$service_name.*"
         return 1
     fi
@@ -55,7 +56,7 @@ migrate-execute-mybatis-migrations() {
       | tee -a "$DB_MIGRATION_LOG"
     )
 
-    if [[ ! "${migrateResult}" ]] || grep -q "MyBatis Migrations SUCCESS" <<< "${migrateResult}"; then
+    if grep -q "MyBatis Migrations SUCCESS" <<< "${migrateResult}"; then
         info "Migration SUCCESS: $service_name $@"
     else
         error "Migration failed: $service_name $@"
