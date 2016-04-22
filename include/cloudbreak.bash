@@ -185,6 +185,7 @@ cloudbreak-conf-rest-client() {
     declare desc="Defines rest client related parameters"
 
     env-import REST_DEBUG "false"
+    env-import CB_OPENSTACK_API_DEBUG "false"
     env-import CERT_VALIDATION "true"
 }
 
